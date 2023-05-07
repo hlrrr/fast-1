@@ -1,10 +1,36 @@
 from random import randrange
-from fastapi import FastAPI, Query, Response, status, HTTPException
+from fastapi import FastAPI, Query, Response, status, HTTPException, Depends
 from fastapi.params import Body
 from typing import Annotated
 from pydantic import BaseModel
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import time
+from . import models
+from .database import engine, get_db
+from sqlalchemy.orm import Session
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+while True:
+    try:
+        conn=psycopg2.connect(
+            host='211.117.18.86',
+            port='15432',
+            user='lima',
+            password='1q2w3e4r5t',
+            cursor_factory=RealDictCursor,
+        )
+        cursor = conn.cursor()
+        print(f"Db conn: Done")
+        break
+
+    except Exception as error:  
+        print("DB conn: Failed")
+        print("Error: ", error)
+        time.sleep(3)
 
 class Post(BaseModel):
     title: str
@@ -60,8 +86,8 @@ async def creatPost(post:Post):
     # response.status_code=status.HTTP_404_NOT_FOUND
     # return {f'post no.{id}'}
 
-@app.post("/posts/{id}")
-async def get(id:int):
+@app.post("/posts/{id}") # path param ID as str
+async def get(id:int): # converted into int, need to be converted into str again in code processing
     raise HTTPException(
         status_code=status.HTTP_302_FOUND,
         detail=f"this is detail, no.{id}",
@@ -77,3 +103,10 @@ async def deletePost(id:int):
          status_code=status.HTTP_200_OK)
 async def putPost(id:int,post:Post):
     return
+
+
+@app.get("/sqlacm")
+def db_test(db: Session = Depends(get_db)):
+    return {
+        'ststus':'succsess'
+    }
