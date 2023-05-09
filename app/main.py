@@ -1,21 +1,17 @@
-from random import randrange
 from fastapi import FastAPI, Query, Response, status, HTTPException, Depends
-from fastapi.params import Body
-from typing import Annotated
-from httpx import delete
-from pydantic import BaseModel
-import psycopg2
 from psycopg2.extras import RealDictCursor
-import time
-from . import models
+from . import models, schemas
 from .database import engine, get_db
 from sqlalchemy.orm import Session
+import psycopg2
+import time
 
 # create tables
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+# db connection
 while True:
     try:
         conn=psycopg2.connect(
@@ -34,49 +30,61 @@ while True:
         print("Error: ", error)
         time.sleep(3)
 
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
-    # rating: int|None
 
-
-@app.get("/posts")
+@app.get("/posts", status_code=status.HTTP_200_OK, response_model=list[schemas.Post])
 def get_posts(db: Session = Depends(get_db)):
     posts=db.query(models.Post).all()
-    return {'data':posts}
+    return posts
 
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-def creat_post(post:Post, db: Session = Depends(get_db)):
+@app.get("/posts/{id}", response_model=schemas.Post)
+def get_post(id:int, db: Session = Depends(get_db)):
+    post = db.query(models.Post).filter(models.Post.id == id).first()   # first() > more efficient
+
+    if not post:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"no post, id={id}")
+    return post   # Fstring > object 
+
+
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostBase)
+def creat_post(post:schemas.PostBase, db: Session = Depends(get_db)):
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)    # not good
     new_post = models.Post(**post.dict())    # better
 
     db.add(new_post)
     db.commit()
     db.refresh(new_post)    # show the new post
-    return {"data":new_post}
-
-
-@app.get("/posts/{id}")
-def get_post(id:int, db: Session = Depends(get_db)):
-    post = db.query(models.Post).filter(models.Post.id == id).first()   # first() > more efficient
-    if not post:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"no post, id={id}")
-    return {'result': post}     # Fstring > object 
+    return new_post
 
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id:int, db: Session = Depends(get_db)):
-    post = db.query(models.Post).filter(models.Post.id == id)
+    query = db.query(models.Post).filter(models.Post.id == id)
 
-    if post.first() == None:
+    if query.first() == None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"no post, id={id}"
             )
-    post.delete(synchronize_session=False)  # without query evaluation
+    query.delete(synchronize_session=False)  # without query evaluation
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.put("/posts/{id}", response_model=schemas.Post)
+def update_post(id:int, updating: schemas.PostBase, db: Session = Depends(get_db)):
+    query = db.query(models.Post).filter(models.Post.id == id)
+    # post = query.first()
+
+    if query.first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"no post, id={id}"
+            )
+    query.update(updating.dict(), synchronize_session=False)
+    
+    db.commit()
+
+    return query.first()
