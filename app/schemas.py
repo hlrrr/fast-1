@@ -6,9 +6,7 @@ class PostBase(BaseModel):
     title: str
     content: str
     published: bool = True
-
-    class Config:
-        orm_mode = True
+    
 
 class PostCreate(PostBase):
     pass
@@ -18,7 +16,7 @@ class PostUpdate(PostBase):
     pass
 
 
-class Post(PostBase):
+class PostInfo(PostBase):
     id: int
     create_at: datetime
     updated_at: datetime|None
@@ -31,9 +29,16 @@ class Post(PostBase):
     # https://docs.pydantic.dev/latest/usage/models/#orm-mode-aka-arbitrary-class-instances
 
 
-class User(BaseModel):
+class UserBase(BaseModel):
     email: EmailStr
     password: str
+
+    
+class UserInfo(BaseModel):
+    email: EmailStr
+    id: int
+    create_at: datetime
+    updated_at: datetime|None
 
     class Config:
         orm_mode = True
