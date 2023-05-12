@@ -84,7 +84,16 @@ def update_post(id:int, updating: schemas.PostBase, db: Session = Depends(get_db
             detail=f"no post, id={id}"
             )
     query.update(updating.dict(), synchronize_session=False)
-    
+    # print(updating.dict())
     db.commit()
 
     return query.first()
+
+@app.post("/user/singup", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
+def create_user(user: schemas.User,db: Session = Depends(get_db)):
+    new_user = models.User(**user.dict())
+    
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)    # show the new post
+    return new_user

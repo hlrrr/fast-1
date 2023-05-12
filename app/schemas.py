@@ -1,4 +1,4 @@
-from pydantic   import BaseModel
+from pydantic   import BaseModel, EmailStr
 from datetime   import datetime
 
 
@@ -12,6 +12,7 @@ class PostBase(BaseModel):
 
 class PostCreate(PostBase):
     pass
+
 
 class PostUpdate(PostBase):
     pass
@@ -30,3 +31,9 @@ class Post(PostBase):
     # https://docs.pydantic.dev/latest/usage/models/#orm-mode-aka-arbitrary-class-instances
 
 
+class User(BaseModel):
+    email: EmailStr
+    password: str
+
+    class Config:
+        orm_mode = True
