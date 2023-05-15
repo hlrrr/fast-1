@@ -1,7 +1,4 @@
-from typing import Collection
-from venv import create
 
-from fastapi import FastAPI
 from. database import Base
 from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.sql.sqltypes import TIMESTAMP

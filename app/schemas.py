@@ -1,5 +1,6 @@
+from os import access
 from pydantic   import BaseModel, EmailStr, Field, SecretStr
-from datetime   import datetime
+from datetime   import date, datetime
 
 
 class PostBase(BaseModel):
@@ -44,3 +45,11 @@ class UserInfo(UserBase):
 
     class Config:
         orm_mode = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenInfo(BaseModel):
+    id: int|None
+    create_at: datetime
