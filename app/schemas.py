@@ -52,4 +52,4 @@ class Token(BaseModel):
 
 class TokenInfo(BaseModel):
     id: int|None
-    create_at: datetime
+    # create_at: datetime
