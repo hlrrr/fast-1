@@ -2,31 +2,13 @@ from pydantic   import BaseModel, EmailStr, Field, SecretStr
 from datetime   import datetime
 
 
-class PostBase(BaseModel):
-    title: str
-    content: str
-    published: bool = True
-    
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
-class PostCreate(PostBase):
-    pass
-
-
-class PostUpdate(PostBase):
-    pass
-
-
-class PostInfo(PostBase):
-    id: int
-    create_at: datetime
-    updated_at: datetime|None
-
-    class Config:
-        orm_mode = True
-    # to support models that map to ORM objects
-    # response_model로 설정시 필요. DB에는 들어가지만, response body 표시에 문제.
-    # https://fastapi.tiangolo.com/tutorial/sql-databases/#use-pydantics-orm_mode
-    # https://docs.pydantic.dev/latest/usage/models/#orm-mode-aka-arbitrary-class-instances
+class TokenInfo(BaseModel):
+    id: int|None
+    # create_at: datetime
 
 
 class UserBase(BaseModel):
@@ -44,10 +26,29 @@ class UserInfo(UserBase):
         orm_mode = True
         fields = {'password': {'exclude': True}}
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
+class PostBase(BaseModel):
+    title: str
+    content: str
+    published: bool = True
+    
 
-class TokenInfo(BaseModel):
-    id: int|None
-    # create_at: datetime
+class PostInfo(PostBase):
+    id: int
+    create_at: datetime
+    updated_at: datetime|None
+    owner_id: int
+    owner:UserInfo
+
+    class Config:
+        orm_mode = True
+    # to support models that map to ORM objects
+    # response_model로 설정시 필요. DB에는 들어가지만, response body 표시에 문제.
+    # https://fastapi.tiangolo.com/tutorial/sql-databases/#use-pydantics-orm_mode
+    # https://docs.pydantic.dev/latest/usage/models/#orm-mode-aka-arbitrary-class-instances
+
+class PostCreate(PostBase):
+    pass
+
+
+class PostUpdate(PostBase):
+    pass

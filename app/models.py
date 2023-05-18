@@ -1,8 +1,9 @@
 
-from. database import Base
-from sqlalchemy import Boolean, Column, Integer, String
-from sqlalchemy.sql.sqltypes import TIMESTAMP
-from sqlalchemy.sql.expression import text
+from. database      import Base
+from sqlalchemy     import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy.sql.sqltypes        import TIMESTAMP
+from sqlalchemy.sql.expression      import text
+from sqlalchemy.orm     import relationship
 
 
 class Post(Base):
@@ -14,7 +15,8 @@ class Post(Base):
     create_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
     updated_at = Column(TIMESTAMP(timezone=True),nullable=True, onupdate=text('now()'))
     # updated_at = Column(TIMESTAMP(timezone=True),nullable=True, server_onupdate=FetchedValue())
-
+    owner_id = Column(Integer, ForeignKey('users.id', ondelete='NO ACTION'), nullable=False )
+    owner = relationship('User')
 
 class User(Base):
     __tablename__= "users"
