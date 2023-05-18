@@ -1,22 +1,28 @@
-from fastapi    import FastAPI
+from fastapi    import FastAPI, Depends
 from psycopg2.extras    import RealDictCursor
-from .  import models
-from .database      import engine
-from .routers   import post, user, auth
 import psycopg2
 import time
+from .  import models, oauth2, database
+from .database      import engine
+from .routers   import post, user, auth
 
 # create tables
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
-app.include_router(post.router)
-app.include_router(user.router)
-app.include_router(auth.router)
+app = FastAPI(
+     swagger_ui_parameters={"defaultModelsExpandDepth": 0}      # shrink schema section
+)
 
-@app.get('/')
-def root():
-    return "my template"
+# @app.get('/')
+# def root():
+#     return "my template"
+
+app.include_router(auth.router)
+app.include_router(user.router)
+app.include_router(post.router,
+                #    dependencies=[Depends(oauth2.get_current_user)]
+                )
+
 
 # db connection
 while True:

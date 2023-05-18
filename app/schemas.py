@@ -1,6 +1,5 @@
-from os import access
 from pydantic   import BaseModel, EmailStr, Field, SecretStr
-from datetime   import date, datetime
+from datetime   import datetime
 
 
 class PostBase(BaseModel):
@@ -33,18 +32,17 @@ class PostInfo(PostBase):
 class UserBase(BaseModel):
     email: EmailStr
     password: str
-    
-    class Config:
-        fields = {'password': {'exclude': True}}
+
     
 class UserInfo(UserBase):
     id: int
     create_at: datetime
     updated_at: datetime|None
-    # password: SecretStr     # config-exclude로 대체
+    # password: SecretStr   # field.exclude로 대체
 
     class Config:
         orm_mode = True
+        fields = {'password': {'exclude': True}}
 
 class Token(BaseModel):
     access_token: str

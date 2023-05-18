@@ -1,23 +1,23 @@
-from fastapi import FastAPI, Query, Response, status, HTTPException, Depends, APIRouter
+from fastapi import status, HTTPException, Depends, APIRouter
 from .. import models, schemas, utils
-from ..database import get_db
-from sqlalchemy.orm import Session
+from ..annotations import annotation_db
 
 router = APIRouter(
     prefix='/users',
     tags=['Users'],
-    # dependencies=[Depends(get_token_header)],
-)
+    )
 
 
-@router.post("/signup", status_code=status.HTTP_201_CREATED, response_model=schemas.UserInfo)
-def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
+@router.post("/signup",
+             status_code=status.HTTP_201_CREATED,
+             response_model=schemas.UserInfo)
+def create_user(user: schemas.UserBase,
+                db:annotation_db):
     query = db.query(models.User).filter(models.User.email == user.email)
     if query.first() is not None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"already exixst, email={user.email}"
-            )
+            detail=f"already exists, email={user.email}")
     
     hashed_pswd = utils.hash(user.password)
     user.password = hashed_pswd
@@ -29,8 +29,11 @@ def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=schemas.UserInfo)
-def get_user(id: int, db: Session = Depends(get_db)):
+@router.get("/{id}",
+            status_code=status.HTTP_200_OK,
+            response_model=schemas.UserInfo)
+def get_user(id: int,
+             db:annotation_db):
     user = db.query(models.User).filter(models.User.id == id).first()
 
     if user is None:
