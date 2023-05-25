@@ -2,12 +2,12 @@ from fastapi    import FastAPI, Depends
 from .  import models
 from .database      import engine
 from .routers   import post, user, auth
+from .config   import settings
 
 # create tables
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(
-     swagger_ui_parameters={"defaultModelsExpandDepth": 0}      # shrink schema section
+app = FastAPI(swagger_ui_parameters={"defaultModelsExpandDepth": 0}      # shrink schema section
 )
 
 # @app.get('/')

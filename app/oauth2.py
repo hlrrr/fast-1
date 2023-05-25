@@ -2,16 +2,17 @@ from fastapi    import Depends, HTTPException, status
 from fastapi.security.oauth2    import OAuth2PasswordBearer
 from jose   import jwt, JWTError
 from datetime   import datetime, timedelta
-from .  import schemas, models, database
 from typing     import Annotated
 from sqlalchemy.orm     import Session
+from .  import schemas, models, database
+from .config    import settings
 
 
 # A "bearer" token is not the only option.
 
-SECRET_KEY = "asldkjfl23490asjiodof@#$@#SDFKASDF"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 100
+SECRET_KEY = settings.secrete_key
+ALGORITHM = settings.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 oauth2_scheme =  OAuth2PasswordBearer(tokenUrl='login')    
 # tokenUrl 조건 확인 
