@@ -1,9 +1,7 @@
-from typing import Optional
 from fastapi    import status, HTTPException, Depends, APIRouter
-from fastapi.param_functions import Form
 from fastapi.security.oauth2    import OAuth2PasswordRequestForm
 from ..     import models, utils, oauth2, schemas
-from ..annotations  import annotation_db
+from ..annotations  import database
 
 router = APIRouter(
     # prefix='/auth',
@@ -21,7 +19,7 @@ def token():
 @router.post('/login', 
              status_code=status.HTTP_200_OK,
              response_model=schemas.Token)
-def login(db:annotation_db,
+def login(db:database,
           user_credentials:OAuth2PasswordRequestForm=Depends()):
     user = db.query(models.User).filter(models.User.email == user_credentials.username).first()     # fields of OAuth2PasswordRequestForm  -> username, password
 

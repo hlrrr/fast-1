@@ -7,5 +7,5 @@ from .oauth2    import get_current_user
 # Dependency Injection, type hint 간소화
 # https://fastapi.tiangolo.com/tutorial/dependencies/#dependencies-first-steps
 
-annotation_db = Annotated[Session, Depends(get_db)]
-annotation_auth = Annotated[int, Depends(get_current_user)]
+database = Annotated[Session, Depends(get_db)]
+authentication = Annotated[int, Depends(get_current_user)]

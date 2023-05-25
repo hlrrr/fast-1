@@ -1,7 +1,6 @@
-from email.policy import HTTP
-from fastapi    import Depends, Response, status, HTTPException, APIRouter
-from ..     import models, schemas, oauth2
-from ..annotations    import annotation_db, annotation_auth
+from fastapi    import Response, status, HTTPException, APIRouter
+from ..     import models, schemas
+from ..annotations    import database, authentication
 
 
 router = APIRouter(
@@ -10,15 +9,31 @@ router = APIRouter(
     # dependencies=[Depends(oauth2.get_current_user)],    
 )
 
+@router.get("/all", 
+            status_code=status.HTTP_200_OK,
+            response_model=list[schemas.PostInfo])
+def all_posts(db:database,
+              limit:int=99,
+              offset:int=0,
+              search:str|None=""):
+    posts=db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(offset).all()
+
+    return posts
+
+
 @router.get("/", 
             status_code=status.HTTP_200_OK,
             response_model=list[schemas.PostInfo])
-def get_posts(db:annotation_db,
+def get_posts(db:database,
             # db:Session=Depends(get_db)
             # db:Annotated[Session, Depends(get_db)]
-              whois:annotation_auth):
-    posts=db.query(models.Post).filter(models.Post.owner_id == whois.id).all()
-
+              whois:authentication,
+              limit:int=99,
+              offset:int=0,
+              search:str|None=""):
+    # posts=db.query(models.Post).filter(models.Post.owner_id == whois.id).offset(offset).all()
+    posts=db.query(models.Post).filter(models.Post.owner_id == whois.id).filter(models.Post.title.contains(search)).limit(limit).offset(offset).all()
+    print(posts)
     return posts
 
 
@@ -26,8 +41,8 @@ def get_posts(db:annotation_db,
             status_code=status.HTTP_200_OK,
             response_model=schemas.PostInfo)
 def get_post(id:int,
-            db:annotation_db,
-            whois:annotation_auth):
+            db:database,
+            whois:authentication):
     post = db.query(models.Post).filter(models.Post.id == id).first()   # first() > more efficient
 
     if not post:
@@ -43,8 +58,8 @@ def get_post(id:int,
              status_code=status.HTTP_201_CREATED, 
              response_model=schemas.PostInfo)
 def creat_post(post:schemas.PostBase, 
-               db:annotation_db,
-               whois:annotation_auth):
+               db:database,
+               whois:authentication):
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)    # not good
     new_post = models.Post(owner_id=whois.id, **post.dict())    # better
     db.add(new_post)
@@ -56,8 +71,8 @@ def creat_post(post:schemas.PostBase,
 @router.delete("/{id}", 
                status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id:int, 
-                db:annotation_db,
-                whois:annotation_auth):
+                db:database,
+                whois:authentication):
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
 
@@ -77,8 +92,8 @@ def delete_post(id:int,
             response_model=schemas.PostInfo)
 def update_post(id:int, 
                 updating: schemas.PostBase,
-                db: annotation_db,
-                whois:annotation_auth):
+                db: database,
+                whois:authentication):
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
 

@@ -1,6 +1,6 @@
-from fastapi import status, HTTPException, Depends, APIRouter
+from fastapi import status, HTTPException, APIRouter
 from .. import models, schemas, utils
-from ..annotations import annotation_db
+from ..annotations import database
 
 router = APIRouter(
     prefix='/users',
@@ -12,7 +12,7 @@ router = APIRouter(
              status_code=status.HTTP_201_CREATED,
              response_model=schemas.UserInfo)
 def create_user(user: schemas.UserBase,
-                db:annotation_db):
+                db:database):
     query = db.query(models.User).filter(models.User.email == user.email)
     if query.first() is not None:
         raise HTTPException(
@@ -33,7 +33,7 @@ def create_user(user: schemas.UserBase,
             status_code=status.HTTP_200_OK,
             response_model=schemas.UserInfo)
 def get_user(id: int,
-             db:annotation_db):
+             db:database):
     user = db.query(models.User).filter(models.User.id == id).first()
 
     if user is None:
