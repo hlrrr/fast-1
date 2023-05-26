@@ -1,4 +1,4 @@
-from pydantic   import BaseModel, EmailStr, SecretStr
+from pydantic   import BaseModel, EmailStr, SecretStr, conint
 from datetime   import datetime
 
 
@@ -52,3 +52,8 @@ class PostCreate(PostBase):
 
 class PostUpdate(PostBase):
     pass
+
+
+class Vote(BaseModel):
+    post_id: int
+    direction: conint(le=1)

@@ -1,6 +1,5 @@
 from fastapi    import Response, status, HTTPException, APIRouter
-from ..     import models, schemas
-from ..annotations    import database, authentication
+from ..     import models, schemas, annotations
 
 
 router = APIRouter(
@@ -12,7 +11,7 @@ router = APIRouter(
 @router.get("/all", 
             status_code=status.HTTP_200_OK,
             response_model=list[schemas.PostInfo])
-def all_posts(db:database,
+def all_posts(db:annotations.database,
               limit:int=99,
               offset:int=0,
               search:str|None=""):
@@ -24,10 +23,10 @@ def all_posts(db:database,
 @router.get("/", 
             status_code=status.HTTP_200_OK,
             response_model=list[schemas.PostInfo])
-def get_posts(db:database,
+def get_posts(db:annotations.database,
             # db:Session=Depends(get_db)
             # db:Annotated[Session, Depends(get_db)]
-              whois:authentication,
+              whois:annotations.authentication,
               limit:int=99,
               offset:int=0,
               search:str|None=""):
@@ -41,8 +40,8 @@ def get_posts(db:database,
             status_code=status.HTTP_200_OK,
             response_model=schemas.PostInfo)
 def get_post(id:int,
-            db:database,
-            whois:authentication):
+            db:annotations.database,
+            whois:annotations.authentication):
     post = db.query(models.Post).filter(models.Post.id == id).first()   # first() > more efficient
 
     if not post:
@@ -58,8 +57,8 @@ def get_post(id:int,
              status_code=status.HTTP_201_CREATED, 
              response_model=schemas.PostInfo)
 def creat_post(post:schemas.PostBase, 
-               db:database,
-               whois:authentication):
+               db:annotations.database,
+               whois:annotations.authentication):
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)    # not good
     new_post = models.Post(owner_id=whois.id, **post.dict())    # better
     db.add(new_post)
@@ -71,8 +70,8 @@ def creat_post(post:schemas.PostBase,
 @router.delete("/{id}", 
                status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id:int, 
-                db:database,
-                whois:authentication):
+                db:annotations.database,
+                whois:annotations.authentication):
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
 
@@ -92,8 +91,8 @@ def delete_post(id:int,
             response_model=schemas.PostInfo)
 def update_post(id:int, 
                 updating: schemas.PostBase,
-                db: database,
-                whois:authentication):
+                db: annotations.database,
+                whois:annotations.authentication):
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
 

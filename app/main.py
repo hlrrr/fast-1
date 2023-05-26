@@ -1,7 +1,7 @@
 from fastapi    import FastAPI, Depends
 from .  import models
 from .database      import engine
-from .routers   import post, user, auth
+from .routers   import post, user, auth, vote
 from .config   import settings
 
 # create tables
@@ -18,3 +18,4 @@ app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(post.router)
                 #    dependencies=[Depends(oauth2.get_current_user)]
+app.include_router(vote.router)
