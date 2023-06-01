@@ -4,12 +4,13 @@ from ..     import schemas, database, models, oauth2, annotations
 
 
 router = APIRouter(
-    prefix='/vote/',
+    prefix='/vote',
     tags=['Vote']
-)
+    )
 
 
-@router.post('/',status_code=status.HTTP_201_CREATED)
+@router.post('/',
+             status_code=status.HTTP_201_CREATED)
 def vote(vote:schemas.Vote,
          db: annotations.database,
          whois:annotations.authentication):
@@ -25,7 +26,7 @@ def vote(vote:schemas.Vote,
     if (vote.direction==1):
         if vote_found:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                                detail=f'user={whois.id} already liked post={vote.post_id}')
+                                detail=f'user={whois.id}, already liked the post={vote.post_id}')
         new_vote = models.Vote(post_id=vote.post_id, user_id=whois.id)
         db.add(new_vote)
         db.commit()
