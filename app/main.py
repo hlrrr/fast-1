@@ -5,7 +5,7 @@ from .routers   import post, user, auth, vote
 from .config   import settings
 
 # create tables
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)      # replaced by alembic
 
 app = FastAPI(swagger_ui_parameters={"defaultModelsExpandDepth": 0}      # shrink schema section
 )
