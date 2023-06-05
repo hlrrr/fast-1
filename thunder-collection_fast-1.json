@@ -1,0 +1,194 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "fast-1",
+    "dateExported": "2023-05-25T06:37:03.386Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "9e4b50fb-027e-4b46-9526-d1e2748e516b",
+            "name": "post",
+            "containerId": "",
+            "created": "2023-05-18T06:25:36.179Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "a5ced821-e52a-4d28-aa0f-60cbb7da3000",
+            "name": "user",
+            "containerId": "",
+            "created": "2023-05-18T06:25:43.311Z",
+            "sortNum": 20000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "ff021df3-14c4-4d47-94e7-88f2c5a9c896",
+            "colId": "104c6078-7b7f-4fb3-8b1d-275a1607bc8b",
+            "containerId": "9e4b50fb-027e-4b46-9526-d1e2748e516b",
+            "name": "post",
+            "url": "/posts",
+            "method": "POST",
+            "sortNum": 2500,
+            "created": "2023-05-18T03:44:48.658Z",
+            "modified": "2023-05-18T11:56:41.789Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"title\": \"string\",\n  \"content\": \"string\",\n  \"published\": true\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "f2d4cfac-77ea-4cc0-b4e5-e7201192507c",
+            "colId": "104c6078-7b7f-4fb3-8b1d-275a1607bc8b",
+            "containerId": "9e4b50fb-027e-4b46-9526-d1e2748e516b",
+            "name": "posts",
+            "url": "/posts",
+            "method": "GET",
+            "sortNum": 5000,
+            "created": "2023-05-18T05:44:30.495Z",
+            "modified": "2023-05-18T10:47:31.657Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "6ff237ba-38c9-4647-b90d-16c9bb08fe39",
+            "colId": "104c6078-7b7f-4fb3-8b1d-275a1607bc8b",
+            "containerId": "a5ced821-e52a-4d28-aa0f-60cbb7da3000",
+            "name": "Login",
+            "url": "/login",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-05-15T05:37:44.068Z",
+            "modified": "2023-05-18T10:37:27.087Z",
+            "headers": [
+                {
+                    "name": "WWW-Authenticate",
+                    "value": "Bearer",
+                    "isDisabled": true
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "username",
+                        "value": "user51@example.com"
+                    },
+                    {
+                        "name": "password",
+                        "value": "string"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "eae2a1d2-c011-42c8-ae88-640bcaf60abb",
+            "colId": "104c6078-7b7f-4fb3-8b1d-275a1607bc8b",
+            "containerId": "",
+            "name": "test",
+            "url": "posts",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2023-05-18T03:47:41.167Z",
+            "modified": "2023-05-18T03:47:53.867Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "d9df374a-2748-4f43-ad84-cd1fa1c9c57d",
+            "colId": "104c6078-7b7f-4fb3-8b1d-275a1607bc8b",
+            "containerId": "9e4b50fb-027e-4b46-9526-d1e2748e516b",
+            "name": "post",
+            "url": "/posts/{id}",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2023-05-18T10:41:53.824Z",
+            "modified": "2023-05-18T12:04:05.134Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "13",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "8b90c6da-8b3b-47a2-95a9-9c4327794a1c",
+            "colId": "104c6078-7b7f-4fb3-8b1d-275a1607bc8b",
+            "containerId": "9e4b50fb-027e-4b46-9526-d1e2748e516b",
+            "name": "update",
+            "url": "/posts/{id}",
+            "method": "PUT",
+            "sortNum": 60000,
+            "created": "2023-05-18T10:46:49.533Z",
+            "modified": "2023-05-18T11:45:05.679Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "12",
+                    "isPath": true
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"title\": \"string\",\n  \"content\": \"123\",\n  \"published\": true\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "2c42491f-838f-4a47-beb5-b64c52de422d",
+            "colId": "104c6078-7b7f-4fb3-8b1d-275a1607bc8b",
+            "containerId": "9e4b50fb-027e-4b46-9526-d1e2748e516b",
+            "name": "delete",
+            "url": "/posts/{id}",
+            "method": "DELETE",
+            "sortNum": 70000,
+            "created": "2023-05-18T11:24:09.763Z",
+            "modified": "2023-05-18T11:56:36.938Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "11",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        }
+    ],
+    "settings": {
+        "headers": [
+            {
+                "name": "WWW-Authenticate",
+                "value": "Bearer",
+                "isDisabled": true
+            }
+        ],
+        "auth": {
+            "type": "oauth2",
+            "oauth2": {
+                "grantType": "password",
+                "tokenUrl": "http://localhost:8000/login",
+                "clientId": "",
+                "clientSecret": "",
+                "clientAuth": "in-header",
+                "username": "user51@example.com",
+                "password": "string"
+            }
+        },
+        "options": {
+            "baseUrl": "localhost:8000"
+        }
+    }
+}
