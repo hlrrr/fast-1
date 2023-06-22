@@ -13,9 +13,9 @@ app = FastAPI(
     )      
 
 
-# @app.get('/')
-# def root():
-#     return "my template"
+@app.get('/')
+def root():
+    return {'msg':"my template"}
 
 app.include_router(auth.router)
 app.include_router(user.router)
