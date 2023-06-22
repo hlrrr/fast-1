@@ -1,0 +1,7 @@
+""" trailing slash 관련
+*without* trailing slash: api 호출 시, redirection(307)이 발생하여 status_code(201, 등)로 판별 실패.
+따라서 테스트 url 작성 시, trailing slash 붙일것.    
+"""
+
+pytest --disable-warnings -v -s   
+

@@ -1,6 +1,7 @@
 ''' Fixtures defined in a conftest.py can be used by any test in that package without needing to import them (pytest will automatically discover them). 
 https://docs.pytest.org/en/6.2.x/fixture.html#conftest-py-sharing-fixtures-across-multiple-files
 '''
+
 ''' fixture 활용
 fixture scope를 통해 fixture 실행 빈도(?) 설정가능.
 https://docs.pytest.org/en/6.2.x/fixture.html#fixture-scopes
@@ -11,7 +12,6 @@ from pytest     import fixture, mark
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 
 from app.config   import settings_test
 from app.main   import app
@@ -39,11 +39,21 @@ def get_db_test():
         db.close()
 
 
-@fixture(scope='module')
+# def test_root(client, session):      # session > client > test func.
+#     res = client.get('/')
+#     # session.query(models.Post)      
+#     # # 필요 시, session을 받아서 활용 가능.
+#     print('=========',res.json().get('msg'))
+#     assert res.status_code == 200
+#     assert res.json().get('msg') == 'my template'
+
+
+# @fixture(scope='session')
+@fixture
 def session():
     print("session check")
-    # Base.metadata.drop_all(bind=engine_test)      
-    # Base.metadata.create_all(bind=engine_test)    # 테스트 수행 전 필요 한 테이블 관련 명령.   
+    Base.metadata.drop_all(bind=engine_test)      
+    Base.metadata.create_all(bind=engine_test)    # 테스트 수행 전 필요 한 테이블 관련 명령.   
     db = SessionLocal_test()
     try:
         yield db
@@ -51,7 +61,7 @@ def session():
         db.close()
 
 
-@fixture(scope='module')
+@fixture
 def client(session):     
     def override_get_db():
         try:
@@ -63,20 +73,11 @@ def client(session):
     # return TestClient(app)
 
 
-
-# def test_root(client, session):      # session > client > test func.
-#     res = client.get('/')
-#     # session.query(models.Post)      
-#     # # 필요 시, session을 받아서 활용 가능.
-#     print('=========',res.json().get('msg'))
-#     assert res.status_code == 200
-#     assert res.json().get('msg') == 'my template'
-
-
 @fixture
 def test_user(client):
-    data = {'email':'user11@test.com',
+    data = {'email':'user24@test.com',
             'password':'teststring'}
+    
     res =client.post('/users/signup/',
                      json=data)
     
