@@ -9,21 +9,22 @@ https://docs.pytest.org/en/6.2.x/fixture.html#fixture-scopes
 
 from fastapi.testclient     import TestClient
 from pytest     import fixture, mark
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.config   import settings_test
 from app.main   import app
 from app.database   import get_db, Base
-from app    import models
+from app.oauth2     import token_create
+# from app    import model
+
 
 # app.dependency_overrides[get_db] = get_db_test      # override DB annotation 
 # client = TestClient(app)  
 
 
 engine_test = create_engine(
-    settings_test.database_url_test,
+    settings_test.database_url,
     # connect_args={"check_same_thread": False}
 )
 SessionLocal_test = sessionmaker(autocommit=False,
@@ -38,7 +39,6 @@ def get_db_test():
     finally:
         db.close()
 
-
 # def test_root(client, session):      # session > client > test func.
 #     res = client.get('/')
 #     # session.query(models.Post)      
@@ -49,9 +49,10 @@ def get_db_test():
 
 
 # @fixture(scope='session')
-@fixture
+@fixture()
 def session():
     print("session check")
+    # Base.metadata.clear()
     Base.metadata.drop_all(bind=engine_test)      
     Base.metadata.create_all(bind=engine_test)    # 테스트 수행 전 필요 한 테이블 관련 명령.   
     db = SessionLocal_test()
@@ -61,7 +62,7 @@ def session():
         db.close()
 
 
-@fixture
+@fixture()
 def client(session):     
     def override_get_db():
         try:
@@ -69,20 +70,32 @@ def client(session):
         finally:
             session.close()
     app.dependency_overrides[get_db] = get_db_test
-    yield TestClient(app)       # yield를 기준으로 테스트 실행 전/후에 필요한 동작을 정의할 수 있다.
+    yield TestClient(app)       # yield를 기준으로 테스트 실행 전/후에 필요한 동작을 정의.
     # return TestClient(app)
 
-
-@fixture
+  
+@fixture()
 def test_user(client):
     data = {'email':'user24@test.com',
             'password':'teststring'}
     
     res =client.post('/users/signup/',
                      json=data)
-    
     print(res.json())
+
     user = res.json()
     user['password']=data['password']
     return user    
     # 해당 fixture 사용 시, test_user['email'], test_user['password'] 접근 가능
+
+@fixture()
+def token(test_user):
+    return token_create({'user_id':test_user['id']})
+
+@fixture()  
+def client_authorized(client, token):
+    client.headers = {
+        **client.headers,
+        "authorization": f'Bearer {token}'
+    }
+    return client
