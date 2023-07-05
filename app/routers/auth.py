@@ -8,12 +8,12 @@ router = APIRouter(
     tags=['Authentication'],
     )
 
-@router.post('/token', 
-             status_code=status.HTTP_200_OK,
-             response_model=schemas.Token)
-def token():
-    access_token = oauth2.token_create(data={'user_id':3})
-    return {'access_token':access_token, 'token_type':'bearer'}
+# @router.post('/token', 
+#              status_code=status.HTTP_200_OK,
+#              response_model=schemas.Token)
+# def token():
+#     access_token = oauth2.token_create(data={'user_id':3})
+#     return {'access_token':access_token, 'token_type':'bearer'}
 
     
 @router.post('/login', 

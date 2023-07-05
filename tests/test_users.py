@@ -1,9 +1,12 @@
+''' Q. list
+"jose.exceptions.JWTError: Signature verification failed." 발생 시, Test Extentsion에서는 통과, 터미널 pytest는 실패???
+'''
 
 from jose   import jwt
 from pytest import mark
 
 from app    import schemas
-from app.config     import settings_test
+from app.config     import settings
 
 # app.dependency_overrides[get_db] = get_db_test      #override annotation for test
 # client = TestClient(app)      # replaced by using pytest.fixture
@@ -28,17 +31,17 @@ def test_create(client):
     assert res.json().get('email') == 'user01@test.com'
 
 
-def test_login(client, test_user):     # test_user에서 client를 이미 사용하지만, client를 직접 사용하기위해 가져와야함.
+def test_login(client, test_user):     # test_user에서 client를 이미 사용하지만, client를 직접 사용하기려면 가져와야함.
     res = client.post('/login/',
                     #   data = {'username':'user19@test.com',
                     #           'password':'teststring'})
                       data = {'username':test_user['email'],
                               'password':test_user['password']})    # check data format(json, form-data, ...)
     
-    res_token =  schemas.Token(**res.json())        # token validation.
+    res_token = schemas.Token(**res.json())        # for token validation.
     payload=jwt.decode(token=res_token.access_token,
-                    key=settings_test.secrete_key,
-                    algorithms = settings_test.algorithm)
+                    key=settings.secrete_key,
+                    algorithms = settings.algorithm)
     id = payload.get('user_id')
     
     assert id == test_user['id']

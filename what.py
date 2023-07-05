@@ -1,15 +1,48 @@
-from fastapi.testclient     import TestClient
-from app.main   import app
-from app    import schemas, annotations
-from app.database   import get_db, get_db_test
-import pytest
+from app    import models as m
+from app    import schemas as s
+from dataclasses    import dataclass, field, asdict
+import json
 
-from app.routers    import user
+# @dataclass(order=True)
+# class Post:
+#     index: int= field(init=False, repr=False)
+#     title: str
+#     content: str
+#     owner_id: int
 
-def test_create():
-    original = user.create_user
-    print(user.create_user.__annotations__['db'])
-    original.__annotations__['db'] = annotations.database_test
-    print(original.__annotations__['db'])
+#     def __post_init__(self):
+#         self.index = self.owner_id
 
-test_create()
+ 
+def test_posts():
+    # post_1 = Post("first title", "first content", 1)
+    # post_2 = Post("second title", "second content", 1)
+    # post_3 = Post("thid title", "third content", 1)
+    post = m.Post
+    post1=post(**{'title':"1 title", 'content':"1 content",'owner_id':1})
+    post2=post(**{'title':"2 title", 'content':"2 content",'owner_id':1})
+    post3=post(**{'title':"3 title", 'content':"3 content",'owner_id':1})
+
+
+    posts = [post1, post2, post3]
+
+    print(posts)
+    session.add_all(posts)
+    session.commit()
+
+    posts = session.query(m.Post).all()
+    # def create_post_model(post):
+    #    return m.Post(**asdict(post))
+
+    # posts_mapped = (map(create_post_model, posts))
+    # print(posts_mapped)
+
+test_posts()
+
+
+
+# def user():
+#     user = s.UserBase(email='test@gmail.com', password='123')
+#     print(type(user))
+
+# user()

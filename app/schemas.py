@@ -1,3 +1,6 @@
+'''  VALIDATION ERROR WARING
+schema inheritance or with config > response_model > ex)fields.exclude, validation error possibility
+'''
 from pydantic   import BaseModel, EmailStr, SecretStr, conint
 from datetime   import datetime
 
@@ -22,17 +25,17 @@ class TokenInfo(BaseModel):
 class UserBase(BaseModel):
     email: EmailStr
     password: str
-
+    
     
 class UserInfo(UserBase):
     id: int
     create_at: datetime
     updated_at: datetime|None
-    # password: SecretStr   # field.exclude로 대체
+    password: SecretStr   # field.exclude로 대체
 
     class Config:
         orm_mode = True
-        fields = {'password': {'exclude': True}}
+        # fields = {'password': {'exclude': True}}
 
 class PostBase(BaseModel):
     title: str
@@ -60,7 +63,7 @@ class PostInfo(PostBase):
 
 
 class PostLikey(BaseModel):
-    Post: PostInfo      # _asdict()로 필드명 확인. -> {'Post': <app.models.Post object at 0x1065089d0>, 'likey': 2}
+    Post: PostInfo      # _asdict()로 필드명 확인 후 선언. -> {'Post': <app.models.Post object at 0x1065089d0>, 'likey': 2}
     likey: int
 
     class Config:

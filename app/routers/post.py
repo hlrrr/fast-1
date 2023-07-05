@@ -30,10 +30,10 @@ def get_posts(db:annotations.database,
             limit:int=99,
             offset:int=0,
             search:str|None=""):
-    # posts=db.query(models.Post).filter(models.Post.owner_id==whois.id).offset(offset).all()
-    #  = db.query(models.Post).filter(models.Post.owner_id==whois.id).filter(models.Post.title.contains(search)).limit(limit).offset(offset).all()       # 검색어 포함
+    # posts = db.query(models.Post).filter(models.Post.owner_id==whois.id).offset(offset).all()
+    # posts = db.query(models.Post).filter(models.Post.owner_id==whois.id).filter(models.Post.title.contains(search)).limit(limit).offset(offset).all()       # 검색어 포함
 
-    posts = db.query(models.Post, func.count(models.Vote.post_id).label('likey')).join(models.Vote, models.Vote.post_id==models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)).limit(limit).offset(offset).all()         # with likey
+    posts = db.query(models.Post, func.count(models.Vote.post_id).label('likey')).join(models.Vote, models.Vote.post_id==models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)).filter(models.Post.owner_id==whois.id).limit(limit).offset(offset).all()    # with likey
     # result=[{'post':a, 'likey':b} for a,b in posts]
                 
     return posts
@@ -43,10 +43,11 @@ def get_posts(db:annotations.database,
             status_code=status.HTTP_200_OK,
             response_model=schemas.PostLikey)
 def get_post(id:int,
+             whois:annotations.authentication,
              db:annotations.database):
     # post = db.query(models.Post).filter(models.Post.id==id).first()   # first() > more efficient
 
-    post = db.query(models.Post, func.count(models.Vote.post_id).label('likey')).join(models.Vote, models.Vote.post_id==models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id==id).first()  # with likey
+    post = db.query(models.Post, func.count(models.Vote.post_id).label('likey')).join(models.Vote, models.Vote.post_id==models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id==whois.id).filter(models.Post.id==id).first()  # with likey
     
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
