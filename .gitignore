@@ -2,6 +2,7 @@
 .vv
 .env_test
 what.py
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
