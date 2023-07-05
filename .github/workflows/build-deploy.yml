@@ -1,4 +1,5 @@
 # https://docs.github.com/en/actions/examples/using-scripts-to-test-your-code-on-a-runner
+# https://docs.docker.com/build/ci/github-actions/
 
 name: FastAPP YAML
 
@@ -19,7 +20,7 @@ jobs:
         SECRETE_KEY:  ${{secrets.SECRETE_KEY}}
         ALGORITHM: ${{secrets.ALGORITHM}}
         ACCESS_TOKEN_EXPIRE_MINUTES:  ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
-# https://docs.github.com/en/actions/security-guides/encrypted-secrets
+        # https://docs.github.com/en/actions/security-guides/encrypted-secrets
     
     runs-on: ubuntu-latest
 
@@ -40,3 +41,23 @@ jobs:
         
       - name: run pytest
         run: pytest
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fast-1:latest
+          cache-from: type=registry,ref= ${{ secrets.DOCKERHUB_USERNAME }}/fast-1:buildcache
+          cache-to: type=registry,ref= ${{ secrets.DOCKERHUB_USERNAME }}/fast-1:buildcache,mode=max
+          # https://docs.docker.com/build/ci/github-actions/cache/
