@@ -58,6 +58,6 @@ jobs:
           file: ./dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fast-1:latest
-          cache-from: type=registry,ref= ${{ secrets.DOCKERHUB_USERNAME }}/fast-1:buildcache
-          cache-to: type=registry,ref= ${{ secrets.DOCKERHUB_USERNAME }}/fast-1:buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/fast-1:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/fast-1:buildcache,mode=max
           # https://docs.docker.com/build/ci/github-actions/cache/
