@@ -1,7 +1,8 @@
 from fastapi    import FastAPI, Depends
 from fastapi.middleware.cors    import CORSMiddleware
+from starlette_admin.contrib.sqla import Admin, ModelView
 
-from .  import models
+from .          import models as m
 from .database      import engine
 from .routers   import post, user, auth, vote
 from .config   import settings
@@ -31,3 +32,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+''' for starlette_admin
+'''
+admin = Admin(engine)
+
+admin.add_view(ModelView(m.User))
+admin.add_view(ModelView(m.Post))
+
+admin.mount_to(app)
