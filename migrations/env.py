@@ -7,11 +7,11 @@ from alembic import context
 
 from app.models   import Base       # database -> models -> alembic
 from app.config     import settings
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url_alembic)     # override values in alembic.ini 
+config.set_main_option("sqlalchemy.url", 
+                       settings.database_url_alembic)     # override values in alembic.ini 
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

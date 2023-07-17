@@ -2,6 +2,7 @@ from fastapi import status, HTTPException, APIRouter
 from .. import models, schemas, utils
 from ..annotations import database
 
+
 router = APIRouter(
     prefix='/users',
     tags=['Users'],

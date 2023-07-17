@@ -3,6 +3,7 @@ schema inheritance or with config > response_model > ex)fields.exclude, validati
 '''
 from pydantic   import BaseModel, EmailStr, SecretStr, conint
 from datetime   import datetime
+from enum   import Enum
 
 from app.models import Post
 
@@ -20,6 +21,13 @@ class Token(BaseModel):
 class TokenInfo(BaseModel):
     id: int|None
     # create_at: datetime
+
+
+class SnsType(str, Enum):
+    email: str = "email"
+    facebook: str = "facebook"
+    google: str = "google"
+    kakao: str = "kakao"
 
 
 class UserBase(BaseModel):

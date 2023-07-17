@@ -1,0 +1,18 @@
+# alembic branches
+# https://alembic.sqlalchemy.org/en/latest/branches.html
+# https://alembic.sqlalchemy.org/en/latest/cookbook.html#multiple-environments
+
+version_locations = %(here)s/bar:%(here)s/bat:migrations/versions
+version_locations = migrations/versions:migrations/versions/test
+
+alembic revision -m "create networking branch" --head=base --branch-label=networking --version-path=model/networking
+alembic upgrade/downgrade heads
+
+# alembic.ini에서 분기 설정하지 않으면 라벨/경로 옵션 의미 없는듯.
+The multiple base feature is intended to allow for multiple Alembic versioning lineages which share the same alembic_version table. This is so that individual revisions within the lineages can have cross-dependencies on each other. For the simpler case where one project has multiple, completely independent revision lineages that refer to separate alembic_version tables, see the example in Run Multiple Alembic Environments from one .ini file.
+
+
+""" middleware 관련 
+starlette's trustested host middleware  
+except path 관련 설정 부재 > 클라우드 환경에서 로드밸런서에서 도메인이 아닌 내부아이피 사용하여(확인필요), 헬스체크 실패 > 서버 다운으로 인식. 관련 소스 수정하여 추가 필요함.
+"""
